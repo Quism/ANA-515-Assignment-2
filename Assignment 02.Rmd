@@ -1,0 +1,75 @@
+---
+title: "ANA 515 Assignment"
+author: "Gyu Hyun Byun"
+date: "2022-09-18"
+output:
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(knitr)
+library(tidyselect)
+library(tinytex)
+knitr::opts_chunk$set(echo = TRUE)
+```
+##
+## Section 1: Description of the data
+##
+The dataset I am using is alochol consumption, the data behind the story, "Dear Mona Followup: Where Do People Drink The Most Beer, Wine And Spirits?" The population is countries with four variables - "beer_servings", "spirit_servings", "wine_servings", and "total_litres_of_pure_alcohol". The data would likely live in a database as the data is well structured and organized with columns and rows. The dataset is governed and published by the World Health Organization ("WHO"). The WHO assumes the roles and responsibilities for the original dataset. I don't see any security or ethics issues related to this dataset as it is publicly published data from the WHO, a credible United Nations agency, for benefit of the world's public health. The data shows countries as population, not speicifc individuals, which mitigates any ethical issues.
+
+Please find the dataset at https://github.com/fivethirtyeight/data/blob/50ec9ccfe3aa20f328bfd5e5da584fa5e15efee6/alcohol-consumption/drinks.csv
+
+##
+## Section 2: Reading the data into R
+##
+```{r echo = TRUE}
+drinks <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/50ec9ccfe3aa20f328bfd5e5da584fa5e15efee6/alcohol-consumption/drinks.csv")
+drinks.data <- data.frame(drinks)
+```
+##
+## Section 3: Clean the data
+##
+The data are sorted by the varaible total_litres_of_pure_alcohol in reverse order.
+
+```{r echo = TRUE}
+drinks.data <- drinks.data[order(-drinks.data$total_litres_of_pure_alcohol),]
+drinks.data = drinks.data%>%select(beer_servings, spirit_servings, wine_servings, total_litres_of_pure_alcohol)
+```
+##
+## Section 4: Characteristics of the data
+##
+The data has `r nrow(drinks.data)` rows and `r ncol(drinks.data)` columns. The names of the columns and a brief description of each are in the table below:
+
+```{r, echo = TRUE}
+Variable = colnames(drinks.data)
+Description = c("12-ounce cans of beer consumed per person per year",
+                "1.5-fluid ounces / shot-glasses of spirit consumed per person per year",
+                "Glasses of wine per person per year",
+                "Total liters of pure alcohol consumed per person per year")
+vars = data.frame(Variable, Description)
+kable(vars, caption =  "Variables and Their Descriptions")
+```
+##
+## Section 5: Summary statistics
+## 
+```{r echo = TRUE}
+sub.data = drinks.data%>%select(beer_servings, spirit_servings, wine_servings, total_litres_of_pure_alcohol)
+sub.summary = summary(sub.data)
+sub.summary
+
+beer_servings_0 <- sum(is.na(drinks.data$beer_servings))
+spirit_servings_0 <- sum(is.na(drinks.data$spirit_servings))
+wine_servings_0 <- sum(is.na(drinks.data$wine_servings))
+total_litres_of_pure_alcohol_0 <- sum(is.na(drinks.data$total_litres_of_pure_alcohol))
+```
+There are `r beer_servings_0` countries with missing beer_servings.
+
+
+There are `r spirit_servings_0` countries with missing spirit_servings.
+
+
+There are `r wine_servings_0` countries with missing wine_servings.
+
+
+There are `r total_litres_of_pure_alcohol_0` countries with missing total_litres_of_pure_alcohol.
